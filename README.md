@@ -8,7 +8,6 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Лицензия](https://img.shields.io/badge/Лицензия-MIT-green)](LICENSE)
 
 ---
 
