@@ -35,30 +35,36 @@
 ##  Архитектура
 
 ```
-conference-app/
-├── main.py               # FastAPI бэкенд — все эндпоинты и модели данных
-├── data/                 # JSON-хранилище (создаётся автоматически)
-│   ├── participants.json
-│   ├── sections.json
-│   └── attendance.json
-├── static/
-│   ├── index.html        # Дашборд
-│   ├── participants.html # Управление участниками
-│   ├── sections.html     # Управление секциями
-│   ├── attendance.html   # Учёт посещения
-│   ├── badges.html       # Бейджи
-│   ├── reports.html      # Отчёты и аналитика
-│   ├── css/
-│   │   ├── main.css      # Основные стили
-│   │   └── components.css
-│   └── js/
-│       ├── api.js        # REST API-клиент + утилиты
-│       ├── app.js        # Глобальные утилиты
-│       ├── participants.js
-│       ├── sections.js
-│       ├── attendance.js
-│       ├── badges.js
-│       └── reports.js
+conference/
+├── main.py             
+├── database.py          
+├── models.py           
+├── routers/
+│   ├── __init__.py      
+│   ├── participants.py  
+│   ├── sections.py     
+│   ├── attendance.py    
+│   ├── badges.py        
+│   └── stats.py        
+│
+└── frontend/           
+    ├── index.html
+    ├── participants.html
+    ├── sections.html
+    ├── attendance.html
+    ├── badges.html
+    ├── reports.html
+    ├── css/
+    │   ├── main.css
+    │   └── components.css
+    └── js/
+        ├── api.js
+        ├── app.js
+        ├── participants.js
+        ├── sections.js
+        ├── attendance.js
+        ├── badges.js
+        └── reports.js
 ```
 
 ---
