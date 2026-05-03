@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Участники - Конференция </title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <div class="logo-text">Конференция</div>
+            </div>
+            <nav>
+                <div class="nav-label">Основное</div>
+                <a href="index.html"><i class="fas fa-chart-line"></i><span>Дашборд</span></a>
+                <a href="participants.html" class="active"><i class="fas fa-users"></i><span>Участники</span></a>
+                <a href="sections.html"><i class="fas fa-layer-group"></i><span>Секции</span></a>
+                <div class="nav-label">Управление</div>
+                <a href="badges.html"><i class="fas fa-id-card"></i><span>Бейджи</span></a>
+                <a href="attendance.html"><i class="fas fa-calendar-check"></i><span>Посещение</span></a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i><span>Отчёты</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="exportData()" class="btn" style="width:100%"><i class="fas fa-download"></i> Экспорт</button>
+                <button onclick="clearAll()" class="btn danger" style="width:100%"><i class="fas fa-trash"></i> Сброс</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1>Участники</h1>
+                    <p>Регистрация и управление участниками конференции</p>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <!-- ADD FORM -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-user-plus"></i> Новый участник</div>
+                    <form id="partForm" class="form-grid" onsubmit="addParticipant(event)">
+                        <div class="form-field">
+                            <label class="form-label">Фамилия *</label>
+                            <input name="lastName" placeholder="Иванов" required>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Имя *</label>
+                            <input name="firstName" placeholder="Иван" required>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Организация</label>
+                            <input name="organization" placeholder="МГУ, ВШЭ...">
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Email *</label>
+                            <input name="email" type="email" placeholder="ivan@example.com" required>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Роль *</label>
+                            <select name="role" required>
+                                <option value="">Выбрать роль...</option>
+                                <option value="докладчик">🎤 Докладчик</option>
+                                <option value="слушатель">👥 Слушатель</option>
+                                <option value="организатор">⚙️ Организатор</option>
+                            </select>
+                        </div>
+                        <div class="form-field" style="justify-content:flex-end">
+                            <button type="submit" class="btn primary"><i class="fas fa-save"></i> Зарегистрировать</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- TABLE -->
+                <div class="card">
+                    <div class="section-header">
+                        <span class="section-title"><i class="fas fa-list"></i> Список участников</span>
+                        <div class="search-row" style="margin-bottom:0">
+                            <input type="search" id="searchInput" placeholder="🔍 Поиск..." oninput="loadParticipants()">
+                            <select id="roleFilter" onchange="loadParticipants()">
+                                <option value="">Все роли</option>
+                                <option value="докладчик">Докладчики</option>
+                                <option value="слушатель">Слушатели</option>
+                                <option value="организатор">Организаторы</option>
+                            </select>
+                            <button onclick="loadParticipants()" class="btn icon-only"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th><th>Участник</th><th>Организация</th><th>Email</th><th>Роль</th><th>Бейдж</th><th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="partTableBody">
+                                <tr><td colspan="7" class="td-empty">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function loadParticipants() {
+            const search = document.getElementById('searchInput')?.value || '';
+            const role = document.getElementById('roleFilter')?.value || '';
+            let arr = await API.getParticipants(search);
+            if (role) arr = arr.filter(p => p.role === role);
+
+            const tbody = document.getElementById('partTableBody');
+            if (arr.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="td-empty">Нет участников</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = arr.map(p => `
+                <tr>
+                    <td class="td-id">#${p.id}</td>
+                    <td><strong>${p.lastName} ${p.firstName}</strong></td>
+                    <td style="color:#6b7280">${p.organization || '—'}</td>
+                    <td><a href="mailto:${p.email}" style="color:#6d28d9;text-decoration:none">${p.email}</a></td>
+                    <td><span class="badge ${roleClass(p.role)}">${roleEmoji(p.role)} ${p.role}</span></td>
+                    <td>${p.badgePrinted ? '<span class="badge green"><i class="fas fa-check"></i> Напечатан</span>' : `<button class="btn success sm" onclick="printBadge(${p.id})"><i class="fas fa-print"></i> Печать</button>`}</td>
+                    <td><button class="btn danger sm" onclick="delParticipant(${p.id})"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function addParticipant(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = Object.fromEntries(new FormData(form));
+            try {
+                await API.createParticipant(data);
+                showToast('Участник зарегистрирован');
+                form.reset();
+                loadParticipants();
+            } catch (err) { }
+        }
+
+        async function delParticipant(id) {
+            if (!confirm('Удалить участника?')) return;
+            try {
+                await API.deleteParticipant(id);
+                showToast('Участник удалён', 'warning');
+                loadParticipants();
+            } catch (err) { }
+        }
+
+        async function printBadge(id) {
+            try {
+                await API.printBadge(id);
+                showToast('Бейдж напечатан');
+                loadParticipants();
+            } catch (err) { }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadParticipants);
+    </script>
+</body>
+</html>

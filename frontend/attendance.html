@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Посещение - Конференция</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <div class="logo-text">Конференция</div>
+            </div>
+            <nav>
+                <div class="nav-label">Основное</div>
+                <a href="index.html"><i class="fas fa-chart-line"></i><span>Дашборд</span></a>
+                <a href="participants.html"><i class="fas fa-users"></i><span>Участники</span></a>
+                <a href="sections.html"><i class="fas fa-layer-group"></i><span>Секции</span></a>
+                <div class="nav-label">Управление</div>
+                <a href="badges.html"><i class="fas fa-id-card"></i><span>Бейджи</span></a>
+                <a href="attendance.html" class="active"><i class="fas fa-calendar-check"></i><span>Посещение</span></a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i><span>Отчёты</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="exportData()" class="btn" style="width:100%"><i class="fas fa-download"></i> Экспорт</button>
+                <button onclick="clearAll()" class="btn danger" style="width:100%"><i class="fas fa-trash"></i> Сброс</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1>Учёт посещения</h1>
+                    <p>Запись на секции и отметка присутствия</p>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-pen-alt"></i> Записать на секцию</div>
+                    <form id="attForm" class="form-grid" onsubmit="registerAttendance(event)">
+                        <div class="form-field">
+                            <label class="form-label">Участник *</label>
+                            <select name="participantId" required>
+                                <option value="">Загрузка участников...</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Секция *</label>
+                            <select name="sectionId" required>
+                                <option value="">Загрузка секций...</option>
+                            </select>
+                        </div>
+                        <div class="form-field" style="justify-content:flex-end">
+                            <button type="submit" class="btn primary"><i class="fas fa-save"></i> Записать</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="search-row">
+                    <select id="filterSection" onchange="loadAttendance()">
+                        <option value="">Все секции</option>
+                    </select>
+                    <select id="filterStatus" onchange="loadAttendance()">
+                        <option value="">Все статусы</option>
+                        <option value="зарегистрирован">Зарегистрирован</option>
+                        <option value="присутствовал">Присутствовал</option>
+                        <option value="отсутствовал">Отсутствовал</option>
+                    </select>
+                    <button onclick="loadAttendance()" class="btn icon-only"><i class="fas fa-sync-alt"></i></button>
+                </div>
+
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Участник</th><th>Роль</th><th>Секция</th><th>Зарегистрирован</th><th>Статус</th><th>Отметить</th></tr>
+                            </thead>
+                            <tbody id="attTableBody">
+                                <tr><td colspan="6" class="td-empty">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let _participants = [], _sections = [];
+
+        async function loadAttendance() {
+            const tbody = document.getElementById('attTableBody');
+            try {
+                const [attendance, participants, sections] = await Promise.all([
+                    API.getAttendance(), API.getParticipants(), API.getSections()
+                ]);
+
+                _participants = participants;
+                _sections = sections;
+
+                const filterSec = document.getElementById('filterSection');
+                const currentSec = filterSec.value;
+                filterSec.innerHTML = '<option value="">Все секции</option>' +
+                    sections.map(s => `<option value="${s.id}" ${currentSec == s.id ? 'selected' : ''}>${s.title}</option>`).join('');
+
+                const partMap = Object.fromEntries(participants.map(p => [p.id, p]));
+                const secMap = Object.fromEntries(sections.map(s => [s.id, s]));
+                const filterStatus = document.getElementById('filterStatus').value;
+                const filterSecVal = document.getElementById('filterSection').value;
+
+                let filtered = attendance;
+                if (filterStatus) filtered = filtered.filter(r => r.status === filterStatus);
+                if (filterSecVal) filtered = filtered.filter(r => String(r.sectionId) === filterSecVal);
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="td-empty">Нет записей о посещении</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = filtered.map(r => {
+                    const p = partMap[r.participantId] || { lastName: '?', firstName: '?', role: '?' };
+                    const s = secMap[r.sectionId] || { title: '?' };
+                    const canMark = r.status === 'зарегистрирован';
+                    const statusIcon = r.status === 'присутствовал' ? '✅' : r.status === 'отсутствовал' ? '❌' : '📋';
+
+                    return `
+                        <tr>
+                            <td><strong>${p.lastName} ${p.firstName}</strong></td>
+                            <td><span class="badge ${roleClass(p.role)}">${roleEmoji(p.role)} ${p.role}</span></td>
+                            <td>${s.title}${s.room ? `<br><small style="color:#6b7280">${s.room}</small>` : ''}</td>
+                            <td style="font-size:12px;color:#6b7280">${r.registeredAt || '—'}</td>
+                            <td><span class="badge ${r.status === 'присутствовал' ? 'green' : r.status === 'отсутствовал' ? 'red' : 'blue'}">${statusIcon} ${r.status}</span></td>
+                            <td>${canMark ? `<div class="btn-group"><button class="btn success sm" onclick="markAttendance(${r.participantId},${r.sectionId},true)"><i class="fas fa-check"></i> Был</button><button class="btn danger sm" onclick="markAttendance(${r.participantId},${r.sectionId},false)"><i class="fas fa-times"></i> Не был</button></div>` : '<span style="color:#9ca3af;font-size:12px">отмечено</span>'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="6" class="td-empty" style="color:#dc2626">⚠️ Ошибка загрузки: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function registerAttendance(e) {
+            e.preventDefault();
+            const form = e.target;
+            const pId = parseInt(form.participantId.value);
+            const sId = parseInt(form.sectionId.value);
+            if (!pId || !sId) { showToast('Выберите участника и секцию', 'error'); return; }
+            try {
+                await API.registerAttendance({ participantId: pId, sectionId: sId });
+                showToast('Участник записан на секцию');
+                form.reset();
+                await loadParticipantsForSelect();
+                await loadSectionsForSelect();
+                await loadAttendance();
+            } catch (err) { }
+        }
+
+        async function markAttendance(participantId, sectionId, attended) {
+            try {
+                await API.updateAttendance(participantId, sectionId, attended);
+                showToast(attended ? 'Отмечен как присутствовавший' : 'Отмечен как отсутствовавший');
+                loadAttendance();
+            } catch (err) { }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadParticipantsForSelect();
+            await loadSectionsForSelect();
+            await loadAttendance();
+        });
+    </script>
+</body>
+</html>

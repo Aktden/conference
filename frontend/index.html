@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конференция - Дашборд</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+<div class="logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text">Конференция</div>
+</div>
+            <nav>
+                <div class="nav-label">Основное</div>
+                <a href="index.html" class="active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Дашборд</span>
+                </a>
+                <a href="participants.html">
+                    <i class="fas fa-users"></i>
+                    <span>Участники</span>
+                </a>
+                <a href="sections.html">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Секции</span>
+                </a>
+                <div class="nav-label">Управление</div>
+                <a href="badges.html">
+                    <i class="fas fa-id-card"></i>
+                    <span>Бейджи</span>
+                </a>
+                <a href="attendance.html">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Посещение</span>
+                </a>
+                <a href="reports.html">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Отчёты</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="exportData()" class="btn" style="width:100%"><i class="fas fa-download"></i> Экспорт</button>
+                <button onclick="clearAll()" class="btn danger" style="width:100%"><i class="fas fa-trash"></i> Сброс данных</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1>Панель управления</h1>
+                    <p>Статистика конференции в реальном времени</p>
+                </div>
+                <div class="actions-row">
+                    <a href="participants.html" class="btn primary"><i class="fas fa-user-plus"></i> Участник</a>
+                    <a href="sections.html" class="btn"><i class="fas fa-plus"></i> Секция</a>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <!-- STATS CARDS -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Участники</div>
+                        <div class="stat-value" id="statParticipants">—</div>
+                        <div class="stat-sub">зарегистрировано</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Секции</div>
+                        <div class="stat-value" id="statSections">—</div>
+                        <div class="stat-sub">тематических блоков</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Бейджи</div>
+                        <div class="stat-value" id="statBadges">—</div>
+                        <div class="stat-sub">напечатано</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Посещаемость</div>
+                        <div class="stat-value" id="statAttendance">—</div>
+                        <div class="stat-sub">от зарегистрированных</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- QUICK ACTIONS -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-bolt"></i> Быстрые действия</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                            <a href="participants.html" class="btn" style="justify-content:center;padding:14px;flex-direction:column">
+                                <i class="fas fa-user-plus" style="font-size:20px"></i>
+                                <small>Добавить участника</small>
+                            </a>
+                            <a href="sections.html" class="btn" style="justify-content:center;padding:14px;flex-direction:column">
+                                <i class="fas fa-layer-group" style="font-size:20px"></i>
+                                <small>Создать секцию</small>
+                            </a>
+                            <a href="badges.html" class="btn" style="justify-content:center;padding:14px;flex-direction:column;background:#10b981;border-color:#10b981;color:white">
+                                <i class="fas fa-print" style="font-size:20px"></i>
+                                <small>Печать бейджей</small>
+                            </a>
+                            <a href="reports.html" class="btn" style="justify-content:center;padding:14px;flex-direction:column">
+                                <i class="fas fa-chart-line" style="font-size:20px"></i>
+                                <small>Сформировать отчёт</small>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- ROLES CHART -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-chart-pie"></i> Сводка по ролям</div>
+                        <div id="rolesChart" style="padding:8px 0">
+                            <div style="text-align:center;padding:20px;color:#9ca3af">
+                                <i class="fas fa-spinner fa-pulse"></i> Загрузка...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECENT ACTIVITY -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-history"></i> Последние действия</div>
+                    <div id="activityLog">
+                        <div class="activity-item">
+                            <div class="activity-dot"></div>
+                            <div class="activity-text">Система готова к работе</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function loadDashboard() {
+            try {
+                // Загружаем данные с правильной обработкой ошибок
+                const [participants, sections, attendance] = await Promise.all([
+                    fetch('/api/participants').then(r => r.json()).catch(() => []),
+                    fetch('/api/sections').then(r => r.json()).catch(() => []),
+                    fetch('/api/attendance').then(r => r.json()).catch(() => [])
+                ]);
+
+                // Получаем статистику отдельно
+                let stats = { participants: 0, sections: 0, badges_printed: 0, attendance_rate: 0 };
+                try {
+                    const statsRes = await fetch('/api/stats');
+                    stats = await statsRes.json();
+                } catch(e) {
+                    console.log('Stats error, using calculated values');
+                }
+
+                // Обновляем карточки статистики
+                document.getElementById('statParticipants').textContent = participants.length || stats.participants || 0;
+                document.getElementById('statSections').textContent = sections.length || stats.sections || 0;
+
+                const badgesPrinted = participants.filter(p => p.badgePrinted === true).length;
+                document.getElementById('statBadges').textContent = stats.badges_printed || badgesPrinted || 0;
+
+                const totalAttendance = attendance.length;
+                const attended = attendance.filter(a => a.status === 'присутствовал').length;
+                const attendanceRate = totalAttendance > 0 ? Math.round((attended / totalAttendance) * 100) : 0;
+                document.getElementById('statAttendance').textContent = (stats.attendance_rate || attendanceRate) + '%';
+
+                // Сводка по ролям
+                const докладчики = participants.filter(p => p.role === 'докладчик').length;
+                const слушатели = participants.filter(p => p.role === 'слушатель').length;
+                const организаторы = participants.filter(p => p.role === 'организатор').length;
+
+                const maxCount = Math.max(докладчики, слушатели, организаторы, 1);
+
+                const roleData = [
+                    { name: 'Докладчики', icon: 'fa-microphone-alt', color: '#8b5cf6', count: докладчики },
+                    { name: 'Слушатели', icon: 'fa-users', color: '#06b6d4', count: слушатели },
+                    { name: 'Организаторы', icon: 'fa-user-cog', color: '#ec4899', count: организаторы }
+                ];
+
+                const chartHtml = roleData.map(role => {
+                    const width = (role.count / maxCount) * 100;
+                    return `
+                        <div class="chart-bar-row">
+                            <div class="chart-bar-label" style="min-width: 110px;">
+                                <i class="fas ${role.icon}"></i> ${role.name}
+                            </div>
+                            <div class="chart-bar-track">
+                                <div class="chart-bar-fill" style="width: ${width}%; background: ${role.color};"></div>
+                            </div>
+                            <div class="chart-bar-value" style="font-weight: 700;">${role.count}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                const totalParticipants = participants.length;
+                const chartFooter = `
+                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12px; color: #6b7280;">Всего участников:</span>
+                            <span style="font-size: 20px; font-weight: 700; color: #6d28d9;">${totalParticipants}</span>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('rolesChart').innerHTML = chartHtml + chartFooter;
+
+                // Последние действия
+                if (attendance.length > 0) {
+                    const recent = [...attendance].reverse().slice(0, 5);
+                    const partMap = {};
+                    participants.forEach(p => partMap[p.id] = p);
+                    const secMap = {};
+                    sections.forEach(s => secMap[s.id] = s);
+
+                    const activityHtml = recent.map(a => {
+                        const p = partMap[a.participantId];
+                        const s = secMap[a.sectionId];
+                        const statusIcon = a.status === 'присутствовал' ? '✅' : a.status === 'отсутствовал' ? '❌' : '📋';
+                        const statusText = a.status === 'присутствовал' ? 'посетил' : a.status === 'отсутствовал' ? 'отсутствовал на' : 'записан на';
+                        const name = p ? `${p.lastName} ${p.firstName}` : 'Участник';
+                        const title = s ? s.title : 'секцию';
+                        return `
+                            <div class="activity-item">
+                                <div class="activity-dot"></div>
+                                <div class="activity-text">${statusIcon} ${name} ${statusText} "${title}"</div>
+                            </div>
+                        `;
+                    }).join('');
+                    document.getElementById('activityLog').innerHTML = activityHtml;
+                } else if (participants.length > 0) {
+                    document.getElementById('activityLog').innerHTML = `
+                        <div class="activity-item">
+                            <div class="activity-dot"></div>
+                            <div class="activity-text">📋 Нет записей о посещении. Зарегистрируйте участников на секции.</div>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('activityLog').innerHTML = `
+                        <div class="activity-item">
+                            <div class="activity-dot"></div>
+                            <div class="activity-text">👋 Добавьте первых участников конференции</div>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('rolesChart').innerHTML = `
+                    <div style="text-align:center;padding:20px;color:#dc2626">
+                        <i class="fas fa-exclamation-triangle"></i> Ошибка загрузки<br>
+                        <small style="color:#9ca3af">Проверьте соединение с сервером</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Загружаем при старте и каждые 30 секунд
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

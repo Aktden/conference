@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бейджи - Конференция</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        @media print {
+            .sidebar, .page-header, .card:first-child {
+                display: none !important;
+            }
+            .badges-grid {
+                grid-template-columns: repeat(3,1fr);
+                gap: 10mm;
+            }
+            .badge-card {
+                break-inside: avoid;
+                border: 1px solid #ccc !important;
+            }
+            body { background: white !important; }
+            .content { margin: 0 !important; }
+            .page-body { padding: 10mm !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🎓</div>
+                <div class="logo-text">Конференция</div>
+            </div>
+            <nav>
+                <div class="nav-label">Основное</div>
+                <a href="index.html"><i class="fas fa-chart-line"></i><span>Дашборд</span></a>
+                <a href="participants.html"><i class="fas fa-users"></i><span>Участники</span></a>
+                <a href="sections.html"><i class="fas fa-layer-group"></i><span>Секции</span></a>
+                <div class="nav-label">Управление</div>
+                <a href="badges.html" class="active"><i class="fas fa-id-card"></i><span>Бейджи</span></a>
+                <a href="attendance.html"><i class="fas fa-calendar-check"></i><span>Посещение</span></a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i><span>Отчёты</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="exportData()" class="btn" style="width:100%"><i class="fas fa-download"></i> Экспорт</button>
+                <button onclick="clearAll()" class="btn danger" style="width:100%"><i class="fas fa-trash"></i> Сброс</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1>Бейджи</h1>
+                    <p>Генерация и печать идентификационных бейджей</p>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="card">
+                    <div class="btn-group">
+                        <button onclick="printAllBadges()" class="btn success"><i class="fas fa-print"></i> Напечатать все</button>
+                        <button onclick="window.print()" class="btn"><i class="fas fa-print"></i> Диалог печати</button>
+                        <button onclick="loadBadges()" class="btn icon-only"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <div id="badgeSummary" style="margin-top:14px;font-size:13px;color:#6b7280"></div>
+                </div>
+
+                <div class="badges-grid" id="badgeList">
+                    <div style="text-align:center;padding:20px;color:#9ca3af"><i class="fas fa-spinner fa-pulse"></i> Загрузка...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function loadBadges() {
+            const arr = await API.getParticipants();
+            const container = document.getElementById('badgeList');
+            const printed = arr.filter(p => p.badgePrinted).length;
+            document.getElementById('badgeSummary').innerHTML = `<i class="fas fa-id-card"></i> Напечатано: ${printed} из ${arr.length} · Осталось: ${arr.length - printed}`;
+
+            if (arr.length === 0) {
+                container.innerHTML = '<div style="text-align:center;padding:40px;color:#9ca3af"><i class="fas fa-users"></i> Нет участников</div>';
+                return;
+            }
+
+            container.innerHTML = arr.map(p => {
+                const init = ((p.firstName?.[0] || '') + (p.lastName?.[0] || '')).toUpperCase();
+                const gradients = {
+                    'докладчик': 'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+                    'слушатель': 'linear-gradient(135deg,#06b6d4,#0891b2)',
+                    'организатор': 'linear-gradient(135deg,#ec4899,#db2777)'
+                };
+                const grad = gradients[p.role] || 'linear-gradient(135deg,#6d28d9,#8b5cf6)';
+                return `
+                    <div class="badge-card">
+                        <div class="badge-card-top" style="background:${grad}">
+                            <div class="badge-card-avatar">${init}</div>
+                            <div class="badge-card-name">${p.lastName} ${p.firstName}</div>
+                            <div class="badge-card-org">${p.organization || '—'}</div>
+                        </div>
+                        <div class="badge-card-body">
+                            <div style="display:flex;justify-content:space-between;align-items:center">
+                                <span class="badge ${roleClass(p.role)}">${roleEmoji(p.role)} ${p.role}</span>
+                                <span class="badge-card-id">#${p.id}</span>
+                            </div>
+                        </div>
+                        <div class="badge-card-footer">
+                            <span style="font-size:11px;color:#6b7280"><i class="fas fa-graduation-cap"></i> КОНФЕРЕНЦИЯ</span>
+                            ${p.badgePrinted ? '<span class="badge green"><i class="fas fa-check"></i> Напечатан</span>' : `<button class="btn success sm" onclick="doPrintBadge(${p.id})"><i class="fas fa-print"></i> Печать</button>`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function doPrintBadge(id) {
+            try {
+                await API.printBadge(id);
+                showToast('Бейдж напечатан');
+                loadBadges();
+            } catch (err) { }
+        }
+
+        async function printAllBadges() {
+            try {
+                const res = await API.printAllBadges();
+                showToast(`Напечатано: ${res.count} бейджей`);
+                loadBadges();
+            } catch (err) { }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadBadges);
+    </script>
+</body>
+</html>
