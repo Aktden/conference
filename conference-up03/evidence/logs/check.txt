@@ -1,0 +1,45 @@
+.venv/bin/python scripts/manage.py check
+$ /workspace/scratch/fd0da8ed1979/analysis/clean-checkout/.venv/bin/python -m ruff check .
+All checks passed!
+$ /workspace/scratch/fd0da8ed1979/analysis/clean-checkout/.venv/bin/python -m ruff format --check .
+44 files already formatted
+$ /workspace/scratch/fd0da8ed1979/analysis/clean-checkout/.venv/bin/python -m pytest --cov --cov-report=term-missing --cov-fail-under=80 --junitxml=reports/junit.xml
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.2.0, pluggy-1.7.0
+rootdir: /workspace/scratch/fd0da8ed1979/analysis/clean-checkout
+configfile: pyproject.toml
+testpaths: tests
+plugins: cov-7.1.0, platformdirs-4.14.5, anyio-4.16.0
+collected 40 items
+
+tests/test_app.py ......................................                 [ 95%]
+tests/test_operations.py ..                                              [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/fd0da8ed1979/analysis/clean-checkout/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/fd0da8ed1979/analysis/clean-checkout/reports/junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.14-final-0 _______________
+
+Name                      Stmts   Miss  Cover   Missing
+-------------------------------------------------------
+config.py                    23      1    96%   30
+database.py                  69      0   100%
+main.py                      76     10    87%   47, 52, 92-93, 124-140
+models.py                    69      1    99%   81
+routers/__init__.py           0      0   100%
+routers/attendance.py        39      4    90%   25, 28, 62, 79
+routers/auth.py              44      0   100%
+routers/badges.py            15      0   100%
+routers/participants.py      46      2    96%   50, 71
+routers/sections.py          34      1    97%   13
+routers/stats.py             47      1    98%   38
+security.py                  31      0   100%
+-------------------------------------------------------
+TOTAL                       493     20    96%
+Required test coverage of 80% reached. Total coverage: 95.94%
+======================== 40 passed, 1 warning in 8.36s =========================

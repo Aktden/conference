@@ -1,0 +1,30 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/participants",
+    "status": 200,
+    "response": "Success; personal data omitted"
+  },
+  {
+    "method": "POST",
+    "path": "/api/participants",
+    "status": 201,
+    "response": "Success; personal data omitted"
+  },
+  {
+    "method": "POST",
+    "path": "/api/participants",
+    "status": 422,
+    "response": {
+      "detail": "Проверьте заполнение полей: email"
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/participants/999999",
+    "status": 404,
+    "response": {
+      "detail": "Участник не найден"
+    }
+  }
+]

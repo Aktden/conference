@@ -1,0 +1,7 @@
+{
+  "ui_checks": 8,
+  "javascript_errors": 0,
+  "http_5xx": 0,
+  "screenshots": 13,
+  "browser": "133.0.6943.0"
+}

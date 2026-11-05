@@ -1,0 +1,64 @@
+INFO:     Started server process [7]
+INFO:     Waiting for application startup.
+2026-11-04 15:03:19,764 INFO startup database_ready=true demo=True
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:46805 (Press CTRL+C to quit)
+2026-11-04 15:03:19,893 INFO request=5f754093bc8f method=GET path=/api/health status=200 duration_ms=6.97
+2026-11-04 15:03:21,172 INFO request=97e7af7e984f method=GET path=/ status=200 duration_ms=25.21
+2026-11-04 15:03:21,199 INFO request=9f79e90059f6 method=GET path=/assets/app.css status=200 duration_ms=5.97
+2026-11-04 15:03:21,201 INFO request=df400def3e41 method=GET path=/assets/app.js status=200 duration_ms=7.12
+2026-11-04 15:03:21,241 INFO request=8241c9811edf method=GET path=/api/health status=200 duration_ms=1.76
+2026-11-04 15:03:21,255 INFO request=0d93ceae3db1 method=GET path=/api/auth/me status=401 duration_ms=1.95
+2026-11-04 15:03:21,791 INFO request=74198335396f method=POST path=/api/auth/login status=200 duration_ms=130.42
+2026-11-04 15:03:21,824 INFO request=ee52a16d51ef method=GET path=/api/sections status=200 duration_ms=16.48
+2026-11-04 15:03:21,828 INFO request=a395b828b5a6 method=GET path=/api/stats status=200 duration_ms=22.60
+2026-11-04 15:03:21,828 INFO request=beece52bcb66 method=GET path=/api/participants status=200 duration_ms=21.13
+2026-11-04 15:03:21,831 INFO request=9c1acf45c295 method=GET path=/api/audit status=200 duration_ms=20.25
+2026-11-04 15:03:21,834 INFO request=b9569b1b87e4 method=GET path=/api/attendance status=200 duration_ms=24.20
+2026-11-04 15:03:24,708 INFO request=c5d1b0c4bbc2 method=POST path=/api/participants status=201 duration_ms=7.11
+2026-11-04 15:03:24,742 INFO request=e43afa6fba4c method=GET path=/api/audit status=200 duration_ms=14.42
+2026-11-04 15:03:24,742 INFO request=edc1c5b519f8 method=GET path=/api/sections status=200 duration_ms=17.54
+2026-11-04 15:03:24,742 INFO request=071526e5ed68 method=GET path=/api/stats status=200 duration_ms=18.97
+2026-11-04 15:03:24,744 INFO request=48ca01c9ab27 method=GET path=/api/attendance status=200 duration_ms=17.62
+2026-11-04 15:03:24,747 INFO request=d7addffa8b0d method=GET path=/api/participants status=200 duration_ms=21.15
+2026-11-04 15:03:24,983 INFO request=3cebc7972c64 method=POST path=/api/participants status=409 duration_ms=6.26
+2026-11-04 15:03:26,086 INFO request=ae907512a783 method=POST path=/api/sections status=201 duration_ms=4.48
+2026-11-04 15:03:26,103 INFO request=f447b6c9ef90 method=GET path=/api/stats status=200 duration_ms=9.41
+2026-11-04 15:03:26,108 INFO request=c68d2740effe method=GET path=/api/sections status=200 duration_ms=13.08
+2026-11-04 15:03:26,110 INFO request=acd674ee100d method=GET path=/api/audit status=200 duration_ms=13.93
+2026-11-04 15:03:26,111 INFO request=260b35d8defe method=GET path=/api/attendance status=200 duration_ms=15.37
+2026-11-04 15:03:26,113 INFO request=2741b481b6e1 method=GET path=/api/participants status=200 duration_ms=17.98
+2026-11-04 15:03:26,334 INFO request=a687d2ae568f method=POST path=/api/attendance status=201 duration_ms=5.15
+2026-11-04 15:03:26,355 INFO request=a0c1ce579396 method=GET path=/api/sections status=200 duration_ms=9.07
+2026-11-04 15:03:26,356 INFO request=308cc8296b15 method=GET path=/api/audit status=200 duration_ms=9.99
+2026-11-04 15:03:26,362 INFO request=fbdeefd863ac method=GET path=/api/attendance status=200 duration_ms=15.48
+2026-11-04 15:03:26,366 INFO request=6b8cffc49e8d method=GET path=/api/participants status=200 duration_ms=20.29
+2026-11-04 15:03:26,368 INFO request=dc0d7d1b1dd2 method=GET path=/api/stats status=200 duration_ms=23.02
+2026-11-04 15:03:26,484 INFO request=054504551218 method=PUT path=/api/attendance/13/5 status=200 duration_ms=5.73
+2026-11-04 15:03:26,508 INFO request=eebab4cb0b7c method=GET path=/api/stats status=200 duration_ms=10.11
+2026-11-04 15:03:26,511 INFO request=0d85bae303a2 method=GET path=/api/participants status=200 duration_ms=10.60
+2026-11-04 15:03:26,514 INFO request=71f6b5cc1db6 method=GET path=/api/audit status=200 duration_ms=12.69
+2026-11-04 15:03:26,515 INFO request=d80588cf3e95 method=GET path=/api/attendance status=200 duration_ms=14.82
+2026-11-04 15:03:26,518 INFO request=8064908c9c05 method=GET path=/api/sections status=200 duration_ms=18.30
+2026-11-04 15:03:26,696 INFO request=e9cfa5eb0da9 method=PUT path=/api/participants/13 status=200 duration_ms=5.44
+2026-11-04 15:03:26,723 INFO request=adf6cd8d5a18 method=GET path=/api/sections status=200 duration_ms=11.18
+2026-11-04 15:03:26,724 INFO request=8480da4808e5 method=GET path=/api/attendance status=200 duration_ms=11.39
+2026-11-04 15:03:26,727 INFO request=e1650bf81234 method=GET path=/api/stats status=200 duration_ms=17.00
+2026-11-04 15:03:26,727 INFO request=443be47e7942 method=GET path=/api/participants status=200 duration_ms=15.18
+2026-11-04 15:03:26,730 INFO request=5c562d7c66cc method=GET path=/api/audit status=200 duration_ms=17.09
+2026-11-04 15:03:26,866 INFO request=c5e2fcad809e method=GET path=/api/export status=200 duration_ms=9.78
+2026-11-04 15:03:27,078 INFO request=583b5096f241 method=POST path=/api/import status=200 duration_ms=24.50
+2026-11-04 15:03:27,131 INFO request=e809546ed994 method=GET path=/api/stats status=200 duration_ms=39.27
+2026-11-04 15:03:27,135 INFO request=7b5241823a17 method=GET path=/api/sections status=200 duration_ms=42.23
+2026-11-04 15:03:27,136 INFO request=9d491c175b8d method=GET path=/api/attendance status=200 duration_ms=42.26
+2026-11-04 15:03:27,136 INFO request=b7fc00bea799 method=GET path=/api/audit status=200 duration_ms=42.49
+2026-11-04 15:03:27,136 INFO request=dad113aa015b method=GET path=/api/participants status=200 duration_ms=42.76
+2026-11-04 15:03:27,881 INFO request=77fbc6523f6f method=POST path=/api/auth/logout status=200 duration_ms=6.36
+2026-11-04 15:03:28,120 INFO request=4f7313054879 method=POST path=/api/auth/login status=200 duration_ms=88.62
+2026-11-04 15:03:28,138 INFO request=f73546108587 method=GET path=/api/stats status=200 duration_ms=3.34
+2026-11-04 15:03:28,140 INFO request=09c0d964f95a method=GET path=/api/sections status=200 duration_ms=4.53
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-11-04 15:03:28,741 INFO shutdown
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7]

@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    env_file: .env.production
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      APP_ENV: production
+      DEMO_MODE: "false"
+      COOKIE_SECURE: "true"
+      APP_HOST: 0.0.0.0
+      DATABASE_PATH: /app/data/production.db
+    volumes:
+      - production-data:/app/data
+      - production-logs:/app/logs
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+volumes:
+  production-data:
+  production-logs:

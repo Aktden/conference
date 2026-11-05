@@ -1,0 +1,247 @@
+{
+  "browser": "133.0.6943.0",
+  "checks": [
+    "All seven application pages opened as administrator",
+    "UI creates and searches a participant with Cyrillic case folding",
+    "Duplicate email displays an explicit error without losing the form",
+    "UI creates a section, registers a participant and marks attendance",
+    "Print preview is built separately from badge issuance; no physical printer used",
+    "UI exports JSON and restores the same validated dataset",
+    "390px mobile viewport has no document-level horizontal overflow; navigation works",
+    "Viewer sees aggregate reports without participant navigation or export controls"
+  ],
+  "javascript_errors": [],
+  "http_5xx": [],
+  "expected_errors": "401 before login and 409 for deliberate duplicate submission are expected",
+  "navigation_timing": [
+    {
+      "domContentLoadedMs": 95.59999999962747,
+      "loadMs": 95.70000000018626,
+      "transferBytes": 1257
+    }
+  ],
+  "network": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/assets/app.css",
+      "status": 200
+    },
+    {
+      "path": "/assets/app.js",
+      "status": 200
+    },
+    {
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "path": "/api/auth/me",
+      "status": 401
+    },
+    {
+      "path": "/api/auth/login",
+      "status": 200
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "path": "/api/audit",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 201
+    },
+    {
+      "path": "/api/audit",
+      "status": 200
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 409
+    },
+    {
+      "path": "/api/sections",
+      "status": 201
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    },
+    {
+      "path": "/api/audit",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 201
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    },
+    {
+      "path": "/api/audit",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance/13/5",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "path": "/api/audit",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 200
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    },
+    {
+      "path": "/api/participants/13",
+      "status": 200
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "path": "/api/audit",
+      "status": 200
+    },
+    {
+      "path": "/api/export",
+      "status": 200
+    },
+    {
+      "path": "/api/import",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    },
+    {
+      "path": "/api/attendance",
+      "status": 200
+    },
+    {
+      "path": "/api/audit",
+      "status": 200
+    },
+    {
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "path": "/api/auth/logout",
+      "status": 200
+    },
+    {
+      "path": "/api/auth/login",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "status": 200
+    },
+    {
+      "path": "/api/sections",
+      "status": 200
+    }
+  ],
+  "console": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 409 (Conflict)"
+    }
+  ]
+}

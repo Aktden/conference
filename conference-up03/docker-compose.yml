@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      APP_ENV: demo
+      DEMO_MODE: "true"
+      APP_HOST: 0.0.0.0
+      DATABASE_PATH: /app/data/conference.db
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      COOKIE_SECURE: "false"
+    volumes:
+      - conference-data:/app/data
+      - conference-logs:/app/logs
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+volumes:
+  conference-data:
+  conference-logs:

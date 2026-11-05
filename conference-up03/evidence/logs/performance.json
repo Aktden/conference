@@ -1,0 +1,33 @@
+{
+  "environment": "Linux x86_64; Python 3.12.14; loopback HTTP; 13 participants; 4 sections",
+  "scope": "Sequential local checks, not a capacity test",
+  "measurements": [
+    {
+      "endpoint": "/api/health",
+      "requests": 100,
+      "concurrency": 1,
+      "median_ms": 2.83,
+      "p95_ms": 6.17,
+      "max_ms": 10.26,
+      "errors": 0
+    },
+    {
+      "endpoint": "/api/participants",
+      "requests": 100,
+      "concurrency": 1,
+      "median_ms": 3.76,
+      "p95_ms": 6.19,
+      "max_ms": 10.94,
+      "errors": 0
+    },
+    {
+      "endpoint": "/api/participants?search=Морозова",
+      "requests": 100,
+      "concurrency": 1,
+      "median_ms": 3.61,
+      "p95_ms": 7.33,
+      "max_ms": 12.75,
+      "errors": 0
+    }
+  ]
+}

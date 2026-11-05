@@ -1,0 +1,44 @@
+{
+  "archive": "conference-v3.0.0.zip",
+  "sha256": "19d792427cbd70930c5d87679243ca33d7f1137316a7c92a4f1af967c5bb05c0",
+  "manifest_files": 88,
+  "manifest_valid": true,
+  "start_from_outside_project": {
+    "status": "ok",
+    "version": "3.0.0",
+    "demo": true
+  },
+  "restart": {
+    "status": "ok",
+    "version": "3.0.0",
+    "demo": true
+  },
+  "participants_before_restart": 13,
+  "participants_after_restart": 13,
+  "backup_restore": "passed",
+  "api_cases": [
+    {
+      "method": "GET",
+      "path": "/api/participants",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/participants",
+      "status": 201
+    },
+    {
+      "method": "POST",
+      "path": "/api/participants",
+      "status": 422
+    },
+    {
+      "method": "GET",
+      "path": "/api/participants/999999",
+      "status": 404
+    }
+  ],
+  "physical_printing": false,
+  "docker_executed": false,
+  "windows_executed": false
+}

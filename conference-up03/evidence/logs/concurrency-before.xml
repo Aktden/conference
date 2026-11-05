@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="40" time="19.755" timestamp="2026-11-04T14:52:49.530412+02:00" hostname="0fb5f3e1e1c1"><testcase classname="tests.test_app" name="test_clean_start_and_seed_once" time="0.744" /><testcase classname="tests.test_app" name="test_restart_preserves_intentionally_empty_data" time="0.570" /><testcase classname="tests.test_app" name="test_authentication_cookie_and_logout" time="0.498" /><testcase classname="tests.test_app" name="test_login_rate_limit" time="0.743" /><testcase classname="tests.test_app" name="test_login_origin_and_csrf" time="0.456" /><testcase classname="tests.test_app" name="test_viewer_cannot_read_personal_records[/api/participants]" time="0.405" /><testcase classname="tests.test_app" name="test_viewer_cannot_read_personal_records[/api/participants/1]" time="0.343" /><testcase classname="tests.test_app" name="test_viewer_cannot_read_personal_records[/api/attendance]" time="0.352" /><testcase classname="tests.test_app" name="test_viewer_cannot_read_personal_records[/api/export]" time="0.453" /><testcase classname="tests.test_app" name="test_viewer_cannot_read_personal_records[/api/audit]" time="0.279" /><testcase classname="tests.test_app" name="test_viewer_can_read_aggregate_stats" time="0.451" /><testcase classname="tests.test_app" name="test_operator_permissions" time="0.384" /><testcase classname="tests.test_app" name="test_participant_crud_duplicate_and_search" time="0.373" /><testcase classname="tests.test_app" name="test_invalid_participant_preserves_data[email-bad]" time="0.358" /><testcase classname="tests.test_app" name="test_invalid_participant_preserves_data[lastName-   ]" time="0.349" /><testcase classname="tests.test_app" name="test_invalid_participant_preserves_data[role-admin]" time="0.734" /><testcase classname="tests.test_app" name="test_invalid_participant_preserves_data[firstName-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]" time="0.550" /><testcase classname="tests.test_app" name="test_section_validation[25:30-10]" time="0.425" /><testcase classname="tests.test_app" name="test_section_validation[09:70-10]" time="0.352" /><testcase classname="tests.test_app" name="test_section_validation[9:30-10]" time="0.353" /><testcase classname="tests.test_app" name="test_section_validation[10:00-0]" time="0.359" /><testcase classname="tests.test_app" name="test_section_validation[10:00-10001]" time="0.347" /><testcase classname="tests.test_app" name="test_capacity_duplicate_and_cascade" time="0.579" /><testcase classname="tests.test_app" name="test_parallel_capacity" time="0.339"><failure message="sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 139778127636160 and this is thread id 139777890313920.">authorized = &lt;starlette.testclient.TestClient object at 0x7f20a1a62420&gt;
+
+    def test_parallel_capacity(authorized):
+        sid = authorized.post("/api/sections", json={"title": "Race", "capacity": 1}).json()["id"]
+    
+        def register(pid):
+            return authorized.post(
+                "/api/attendance", json={"participantId": pid, "sectionId": sid}
+            ).status_code
+    
+        with ThreadPoolExecutor(max_workers=2) as pool:
+&gt;           assert sorted(pool.map(register, [1, 2])) == [201, 409]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_app.py:179: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:619: in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:317: in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_app.py:174: in register
+    return authorized.post(
+../.venv/lib/python3.12/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+../.venv/lib/python3.12/site-packages/starlette/testclient.py:518: in request
+    return super().request(
+../.venv/lib/python3.12/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/httpx/_client.py:928: in send
+    raise exc
+../.venv/lib/python3.12/site-packages/httpx/_client.py:922: in send
+    response.read()
+../.venv/lib/python3.12/site-packages/httpx/_models.py:881: in read
+    self._content = b"".join(self.iter_bytes())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/httpx/_models.py:897: in iter_bytes
+    for raw_bytes in self.iter_raw():
+                     ^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/httpx/_models.py:951: in iter_raw
+    for raw_stream_bytes in self.stream:
+                            ^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/httpx/_client.py:153: in __iter__
+    for chunk in self._stream:
+                 ^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/starlette/testclient.py:384: in iter_body
+    exit_stack.close()
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:618: in close
+    self.__exit__(None, None, None)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:610: in __exit__
+    raise exc_details[1]
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:595: in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/starlette/testclient.py:399: in close_app
+    raise exception
+../.venv/lib/python3.12/site-packages/anyio/from_thread.py:272: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/starlette/testclient.py:366: in run_app
+    await self.app(scope, receive, send)
+../.venv/lib/python3.12/site-packages/fastapi/applications.py:1194: in __call__
+    await super().__call__(scope, receive, send)
+../.venv/lib/python3.12/site-packages/starlette/applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+../.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../.venv/lib/python3.12/site-packages/fastapi/telemetry/_asgi.py:151: in __call__
+    await self.app(scope, receive, send)
+../.venv/lib/python3.12/site-packages/starlette/middleware/base.py:203: in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+main.py:53: in diagnostics
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/starlette/middleware/base.py:179: in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+../.venv/lib/python3.12/site-packages/starlette/middleware/base.py:149: in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+../.venv/lib/python3.12/site-packages/starlette/middleware/trustedhost.py:57: in __call__
+    await self.app(scope, receive, send)
+../.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+../.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../.venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+../.venv/lib/python3.12/site-packages/starlette/routing.py:683: in __call__
+    await self.middleware_stack(scope, receive, send)
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:2811: in app
+    await route.handle(scope, receive, send)
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:1839: in handle
+    await self.original_router.handle(scope, receive, send)
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:2894: in handle
+    await included_router._handle_selected(scope, receive, send)
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:1865: in _handle_selected
+    await original_route.handle(scope, receive, send)
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:1328: in handle
+    await effective_context.app(scope, receive, send)
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:166: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+../.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+../.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:152: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:745: in app
+    raw_response = await run_endpoint_function(
+../.venv/lib/python3.12/site-packages/fastapi/routing.py:374: in run_endpoint_function
+    return await run_in_threadpool(
+../.venv/lib/python3.12/site-packages/starlette/concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/anyio/to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+../.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py:2779: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py:1124: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+../.venv/lib/python3.12/site-packages/fastapi/telemetry/_api.py:244: in _run_sync_endpoint
+    return function(**arguments)
+           ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = AttendanceCreate(participantId=1, sectionId=5)
+user = {'id': 1, 'username': 'admin', 'display_name': 'Администратор', 'role': 'admin', ...}
+conn = &lt;sqlite3.Connection object at 0x7f20a1e4f970&gt;
+
+    @router.post("", status_code=201)
+    def register_attendance(data: AttendanceCreate, user=Depends(staff), conn=Depends(get_db)):
+        # Serialize capacity check and insert so parallel requests cannot overbook.
+&gt;       conn.execute("BEGIN IMMEDIATE")
+E       sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 139778127636160 and this is thread id 139777890313920.
+
+routers/attendance.py:23: ProgrammingError</failure></testcase><testcase classname="tests.test_app" name="test_capacity_cannot_shrink_below_registrations" time="0.836" /><testcase classname="tests.test_app" name="test_badges" time="0.383" /><testcase classname="tests.test_app" name="test_export_import_roundtrip" time="0.445" /><testcase classname="tests.test_app" name="test_import_validation_is_atomic[foreign_id]" time="0.360" /><testcase classname="tests.test_app" name="test_import_validation_is_atomic[duplicate_email]" time="0.694" /><testcase classname="tests.test_app" name="test_import_validation_is_atomic[capacity]" time="0.477" /><testcase classname="tests.test_app" name="test_import_validation_is_atomic[confirm]" time="0.569" /><testcase classname="tests.test_app" name="test_import_validation_is_atomic[duplicate_attendance]" time="0.354" /><testcase classname="tests.test_app" name="test_csv_formula_and_encoding" time="0.472" /><testcase classname="tests.test_app" name="test_headers_and_hosts" time="0.383" /><testcase classname="tests.test_app" name="test_production_rejects_demo_db" time="0.288" /><testcase classname="tests.test_app" name="test_production_requires_password_and_disables_docs" time="0.216" /><testcase classname="tests.test_app" name="test_expired_session" time="0.367" /><testcase classname="tests.test_app" name="test_legacy_database_compatible" time="0.374" /><testcase classname="tests.test_operations" name="test_backup_restore_consistency" time="0.250" /><testcase classname="tests.test_operations" name="test_invalid_backup_does_not_create_target" time="0.007" /></testsuite></testsuites>

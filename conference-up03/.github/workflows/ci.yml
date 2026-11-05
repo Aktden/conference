@@ -1,0 +1,48 @@
+name: Conference CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python scripts/manage.py check
+      - run: python scripts/manage.py security
+      - run: python scripts/manage.py build
+      - name: Verify Windows BAT entry points
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          call scripts\setup.bat
+          if errorlevel 1 exit /b 1
+          call scripts\release-check.bat
+          if errorlevel 1 exit /b 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: evidence-${{ matrix.os }}
+          path: |
+            reports/junit.xml
+            release/*
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
+      - run: docker compose up -d --wait
+      - run: curl --fail http://127.0.0.1:8000/api/health
+      - if: always()
+        run: docker compose logs --no-color
+      - if: always()
+        run: docker compose down

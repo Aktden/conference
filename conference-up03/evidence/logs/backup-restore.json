@@ -1,0 +1,19 @@
+{
+  "backup": {
+    "file": "temporary/backup.db",
+    "sha256": "c070d41bbd7dc52a32a51813cf00ce8e6710a582c0ffd7fba07f0a81e76325e3",
+    "bytes": 69632
+  },
+  "restore": {
+    "file": "temporary/restored.db",
+    "sha256": "c070d41bbd7dc52a32a51813cf00ce8e6710a582c0ffd7fba07f0a81e76325e3",
+    "counts": {
+      "participants": 13,
+      "sections": 4,
+      "attendance": 18
+    },
+    "sessions": "invalidated"
+  },
+  "integrity": "ok",
+  "original_untouched": true
+}
